@@ -17,7 +17,8 @@ construct_label <- function(dat,
                             label_sig_bold = NULL,
                             label_sig_high = NULL,
                             round_est = 0,
-                            round_se = 1) {
+                            round_se = 1,
+                            plot_settings = plotsettings_tablebarplot()) {
 
   dat <- fill_column(dat, column_name = label_est, filling = "")
   dat <- fill_column(dat, column_name = label_se, filling = NA)
@@ -41,14 +42,14 @@ if(any(is.na(dat[, c("label_sig_high", "label_sig_bold")]))){
     dat$label_se <- format(round(dat$label_se, round_se), trim = TRUE)
   }
 
-  #if(label_est == "est_Trend_noComp_20112016_percent"){browser()}
-
   dat$label_est <- ifelse(dat$label_sig_bold == TRUE,
     paste0("**", dat$label_est, "**"),
     dat$label_est
   )
 
-  dat$label_sig <- ifelse(dat$label_sig_high == TRUE, "a", "")
+  ## Later on, the number of letters in a string has to be counted for aligning the decimal points.
+  # Therefore, use a letter not used in other expression, which can be later subbed with the correct letter and the html expression for raising it.
+  dat$label_sig <- ifelse(dat$label_sig_high == TRUE, "#", "")
 
   dat$label_se <- ifelse(!is.na(dat$label_se),
     paste0(" (", dat$label_se, ")"),
@@ -65,8 +66,8 @@ if(any(is.na(dat[, c("label_sig_high", "label_sig_bold")]))){
 
   ## Numeric values should be aligned by the decimal point.
   if(label_est_num == TRUE){
-  dat[,  new_name] <- format(dat[, new_name])
-  dat[, new_name] <- gsub("a", "<sup>a</sup>", dat[, new_name])
+  dat[,  new_name] <- align_by_dec(dat[, new_name], plot_settings = plot_settings)
+  dat[, new_name] <- gsub("#", paste0("<sup>", plot_settings$columns_table_sig_high_letter, "</sup>"), dat[, new_name])
   }
 
   dat <- remove_columns(dat, cols = c("label_est", "label_sig", "label_se", "label_sig_bold", "label_sig_high"))
@@ -79,11 +80,9 @@ if(any(is.na(dat[, c("label_sig_high", "label_sig_bold")]))){
 # right align: after dec gleiche Länge
 # mid align: vor und nach dec gleiche Länge
 
-vec = c("1.5", "221.3", "42.11")
-
 ## sup" "
 
-align_by_dec <- function(vec, dec = "\\."){
+align_by_dec <- function(vec, dec = "\\.", plot_settings = plotestting_tablebarplot()){
 
   vec <- gsub(dec, "\\.", vec)
 
@@ -101,20 +100,24 @@ length_after_dec <- sapply(after_dec, function(x){
 max_before <- max(length_before_dec, na.rm = TRUE)
 max_after <- max(length_after_dec, na.rm = TRUE)
 
-filled_before <- sapply(before_dec, function(x){
-  n_fill <- max_before - nchar(x)
-  filler <- paste0(rep(" ", n_fill), collapse = '')
-  out <- paste0(filler, x)
-})
-filled_after <- sapply(after_dec, function(x){
-  n_fill <- max_after - nchar(x)
-  filler <- paste0(rep(" ", n_fill), collapse = '')
-  out <- paste0(x, filler)
+filled_before <- sapply(seq_along(before_dec), function(x){
+  background_colour <- plot_settings$background_stripes_colour[x]
+  n_fill <- max_before - nchar(before_dec[x])
+ filler <- paste0(" <span style='color:", background_colour, "'>", rep("_", n_fill), "</span>")
+
+  out <- paste0(filler, before_dec[x])
 })
 
-res_vec <- paste(filled_before, filled_after, sep = ".")
+filled_after <- sapply(seq_along(after_dec), function(x){
+  background_colour <- plot_settings$background_stripes_colour[x]
+  n_fill <- max_after - nchar(after_dec[x])
+  filler <- paste0(" <span style='color:", background_colour, "'>", rep("_", n_fill), "</span>")
+  out <- paste0(".", after_dec[x], filler)
+})
+
+#res_vec <-  paste0(" <span style='color:red'>.</span>", "And some <span style='color:red'>.</span>.") #paste0(filled_before, filled_after) # sep = "."
+res_vec <-  paste0(filled_before, filled_after) #paste0(filled_before, filled_after) # sep = "."
+
 
 return(res_vec)
 }
-
-align_by_dec(vec)

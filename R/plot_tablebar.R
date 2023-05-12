@@ -138,7 +138,8 @@ plot_tablebar <- function(dat,
       label_se = columns_table_se[[i]],
       label_sig_bold = columns_table_sig_bold[[i]],
       label_sig_high = columns_table_sig_high[[i]],
-      round_est = columns_round[[i]]
+      round_est = columns_round[[i]],
+      plot_settings = plot_settings
     )
   }
 
@@ -150,7 +151,8 @@ plot_tablebar <- function(dat,
       label_se = NULL,
       label_sig_bold = bar_label_sig,
       label_sig_high = NULL,
-      round_est = 1
+      round_est = 1,
+      plot_settings = plot_settings
     )
   }
 
