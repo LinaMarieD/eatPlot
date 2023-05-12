@@ -198,7 +198,7 @@ save_plot(minsta_plot, filename = "../Kap3_2022_MSA.pdf", height = 226.2 / 3)
                              label_se = "se_Trend_noComp_20112016_percent", 
                              round_se = 1)
   dat_bar <- construct_label(dat_bar, 
-                             new_name = "se_Trend_noComp_20162021_percent", 
+                             new_name = "se_Trend_noComp_20162021_percent_label", 
                              label_se = "se_Trend_noComp_20162021_percent", 
                              round_se = 1)
 
@@ -216,6 +216,8 @@ save_plot(minsta_plot, filename = "../Kap3_2022_MSA.pdf", height = 226.2 / 3)
   # Plot 1 ------------------------------------------------------------------
   dat_bar$state_var[duplicated(dat_bar$state_var)] <- " "
 
+  ## add a, then align, thann gsub a with <sup
+#  construct_label(dat_bar, label_est = "est_noTrend_noComp_2011_percent", round_est = 1, label_sig_high = "sig_Trend_CompCrossDiffWhole_20112016")$label
 
   p_bar_1 <- plot_tablebar(
     dat = dat_bar,
@@ -244,7 +246,7 @@ save_plot(minsta_plot, filename = "../Kap3_2022_MSA.pdf", height = 226.2 / 3)
       NULL,
       NULL,
       NULL,
-      "sig_Trend_noComp_20112016",
+      NULL, #"sig_Trend_noComp_20112016",
       NULL
     ),
     columns_table_sig_high = list(

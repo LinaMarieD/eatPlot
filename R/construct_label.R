@@ -18,6 +18,7 @@ construct_label <- function(dat,
                             label_sig_high = NULL,
                             round_est = 0,
                             round_se = 1) {
+
   dat <- fill_column(dat, column_name = label_est, filling = "")
   dat <- fill_column(dat, column_name = label_se, filling = NA)
   dat <- fill_column(dat, column_name = label_sig_high, filling = FALSE)
@@ -31,18 +32,23 @@ if(any(is.na(dat[, c("label_sig_high", "label_sig_bold")]))){
 }
 
   if (is.numeric(dat$label_est) & !is.null(round_est)) {
+    label_est_num <- TRUE
     dat$label_est <- format(round(dat$label_est, round_est), trim = TRUE)
+  }else{
+    label_est_num <- FALSE
   }
   if (is.numeric(dat$label_se) & !is.null(round_se)) {
     dat$label_se <- format(round(dat$label_se, round_se), trim = TRUE)
   }
+
+  #if(label_est == "est_Trend_noComp_20112016_percent"){browser()}
 
   dat$label_est <- ifelse(dat$label_sig_bold == TRUE,
     paste0("**", dat$label_est, "**"),
     dat$label_est
   )
 
-  dat$label_sig <- ifelse(dat$label_sig_high == TRUE, "<sup>a</sup>", "")
+  dat$label_sig <- ifelse(dat$label_sig_high == TRUE, "a", "")
 
   dat$label_se <- ifelse(!is.na(dat$label_se),
     paste0(" (", dat$label_se, ")"),
@@ -57,7 +63,58 @@ if(any(is.na(dat[, c("label_sig_high", "label_sig_bold")]))){
     dat$label_se
   )
 
+  ## Numeric values should be aligned by the decimal point.
+  if(label_est_num == TRUE){
+  dat[,  new_name] <- format(dat[, new_name])
+  dat[, new_name] <- gsub("a", "<sup>a</sup>", dat[, new_name])
+  }
+
   dat <- remove_columns(dat, cols = c("label_est", "label_sig", "label_se", "label_sig_bold", "label_sig_high"))
 
   return(dat)
 }
+
+
+# left_align: vor dec gleiche Länge
+# right align: after dec gleiche Länge
+# mid align: vor und nach dec gleiche Länge
+
+vec = c("1.5", "221.3", "42.11")
+
+## sup" "
+
+align_by_dec <- function(vec, dec = "\\."){
+
+  vec <- gsub(dec, "\\.", vec)
+
+before_dec <- sub("\\..*", "", vec)
+after_dec <- sub(".*\\.", "", vec)
+
+length_before_dec <- sapply(before_dec, function(x){
+  nchar(x)
+  })
+
+length_after_dec <- sapply(after_dec, function(x){
+  nchar(x)
+})
+
+max_before <- max(length_before_dec, na.rm = TRUE)
+max_after <- max(length_after_dec, na.rm = TRUE)
+
+filled_before <- sapply(before_dec, function(x){
+  n_fill <- max_before - nchar(x)
+  filler <- paste0(rep(" ", n_fill), collapse = '')
+  out <- paste0(filler, x)
+})
+filled_after <- sapply(after_dec, function(x){
+  n_fill <- max_after - nchar(x)
+  filler <- paste0(rep(" ", n_fill), collapse = '')
+  out <- paste0(x, filler)
+})
+
+res_vec <- paste(filled_before, filled_after, sep = ".")
+
+return(res_vec)
+}
+
+align_by_dec(vec)
