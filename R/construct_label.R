@@ -63,6 +63,7 @@ if(any(is.na(dat[, c("label_sig_high", "label_sig_bold")]))){
     dat$label_sig,
     dat$label_se
   )
+#if(label_est == "est_Trend_noComp_20112016_percent"){browser()}
 
   ## Numeric values should be aligned by the decimal point.
   if(label_est_num == TRUE){
@@ -100,10 +101,11 @@ length_after_dec <- sapply(after_dec, function(x){
 max_before <- max(length_before_dec, na.rm = TRUE)
 max_after <- max(length_after_dec, na.rm = TRUE)
 
+
 filled_before <- sapply(seq_along(before_dec), function(x){
   background_colour <- plot_settings$background_stripes_colour[x]
   n_fill <- max_before - nchar(before_dec[x])
- filler <- paste0(" <span style='color:", background_colour, "'>", rep("_", n_fill), "</span>")
+  filler <- paste0(" <span style='color:", background_colour, "'>", rep("..", n_fill), "</span>")
 
   out <- paste0(filler, before_dec[x])
 })
@@ -111,13 +113,12 @@ filled_before <- sapply(seq_along(before_dec), function(x){
 filled_after <- sapply(seq_along(after_dec), function(x){
   background_colour <- plot_settings$background_stripes_colour[x]
   n_fill <- max_after - nchar(after_dec[x])
-  filler <- paste0(" <span style='color:", background_colour, "'>", rep("_", n_fill), "</span>")
+  filler <- paste0(" <span style='color:", background_colour, "'>", rep(".", n_fill), "</span>")
   out <- paste0(".", after_dec[x], filler)
 })
 
-#res_vec <-  paste0(" <span style='color:red'>.</span>", "And some <span style='color:red'>.</span>.") #paste0(filled_before, filled_after) # sep = "."
+#res_vec <-  paste0(" <span style='color:red'>..</span>", "2.2 <span style='color:red'>..</span>") #paste0(filled_before, filled_after) # sep = "."
 res_vec <-  paste0(filled_before, filled_after) #paste0(filled_before, filled_after) # sep = "."
-
 
 return(res_vec)
 }
