@@ -246,7 +246,7 @@ save_plot(minsta_plot, filename = "../Kap3_2022_MSA.pdf", height = 226.2 / 3)
       NULL,
       NULL,
       NULL,
-      NULL, #"sig_Trend_noComp_20112016",
+      "sig_Trend_noComp_20112016",
       NULL
     ),
     columns_table_sig_high = list(

@@ -90,11 +90,16 @@ align_by_dec <- function(vec, dec = "\\.", plot_settings = plotestting_tablebarp
 before_dec <- sub("\\..*", "", vec)
 after_dec <- sub(".*\\.", "", vec)
 
-length_before_dec <- sapply(before_dec, function(x){
+before_dec_subbed <- gsub("\\*\\*", "", before_dec)
+after_dec_subbed <- gsub("\\*\\*", "", after_dec)
+
+
+length_before_dec <- sapply(before_dec_subbed, function(x){
   nchar(x)
   })
 
-length_after_dec <- sapply(after_dec, function(x){
+
+length_after_dec <- sapply(after_dec_subbed, function(x){
   nchar(x)
 })
 
@@ -104,7 +109,8 @@ max_after <- max(length_after_dec, na.rm = TRUE)
 
 filled_before <- sapply(seq_along(before_dec), function(x){
   background_colour <- plot_settings$background_stripes_colour[x]
-  n_fill <- max_before - nchar(before_dec[x])
+  background_colour <- "red"
+  n_fill <- max_before - nchar(before_dec_subbed[x])
   filler <- paste0(" <span style='color:", background_colour, "'>", rep("..", n_fill), "</span>")
 
   out <- paste0(filler, before_dec[x])
@@ -112,7 +118,8 @@ filled_before <- sapply(seq_along(before_dec), function(x){
 
 filled_after <- sapply(seq_along(after_dec), function(x){
   background_colour <- plot_settings$background_stripes_colour[x]
-  n_fill <- max_after - nchar(after_dec[x])
+  background_colour <- "red"
+  n_fill <- max_after - nchar(after_dec_subbed[x])
   filler <- paste0(" <span style='color:", background_colour, "'>", rep(".", n_fill), "</span>")
   out <- paste0(".", after_dec[x], filler)
 })
