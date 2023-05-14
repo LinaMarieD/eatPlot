@@ -68,7 +68,7 @@ if(any(is.na(dat[, c("label_sig_high", "label_sig_bold")]))){
   ## Numeric values should be aligned by the decimal point.
   if(label_est_num == TRUE){
   dat[,  new_name] <- align_by_dec(dat[, new_name], plot_settings = plot_settings)
-  dat[, new_name] <- gsub("#", paste0("<sup>", plot_settings$columns_table_sig_high_letter, "</sup>"), dat[, new_name])
+  dat[, new_name] <- gsub("#", paste0("<sup> ", plot_settings$columns_table_sig_high_letter, "</sup>"), dat[, new_name])
   }
 
   dat <- remove_columns(dat, cols = c("label_est", "label_sig", "label_se", "label_sig_bold", "label_sig_high"))
